@@ -1,19 +1,20 @@
+import { useMemo,Dispatch } from 'react'
 import type { CartItem ,Guitar} from '../types'
+import { CartActions } from '../reducers/cartReducer'
 
 type HeaderProps = {
 cart:CartItem[]
 favoritos:Guitar[]
-removeFromCart:(id:Guitar['id']) => void
-removeFromFav:(id:Guitar['id']) => void
-decrementQuantity:(id:Guitar['id']) => void
-increaseQuantity:(id:Guitar['id']) => void
-clearCart:() => void
-isEmpty:boolean
-isEmptyFav:boolean
-
+dispatch: Dispatch<CartActions>
 cartTotal :number
 }
-function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCart,favoritos,removeFromFav,isEmpty,isEmptyFav,cartTotal} :HeaderProps) {
+
+function Header({cart,favoritos,dispatch}:HeaderProps) {
+
+//state derivado
+const isEmpty      =  useMemo(() => cart.length === 0,[cart])
+const isEmptyFav   =  useMemo(() => favoritos.length === 0,[favoritos])
+const cartTotal    =  useMemo( () =>cart.reduce((total,item) => total += (item.quantity * item.price),0),[cart])
 
 
   return (
@@ -39,7 +40,6 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
                             <p className="text-center">El carrito esta vacio</p>
                         ) : (
                             <>
-
                         <table className="w-100 table">
                             <thead>
                                 <tr>
@@ -52,7 +52,6 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
                             </thead>
                             <tbody>                       
                                 {cart.map(guitar =>(
-
                                 <tr key={guitar.id}>
                                     <td>
                                         <img className="img-fluid" 
@@ -68,7 +67,7 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
                                             type="button"
                                             className="btn btn-dark"
                                             
-                                            onClick={()=> decrementQuantity(guitar.id)}
+                                             onClick={()=> dispatch ({type:'decrease-quantity',payload:{id:guitar.id}})}
                                         >
                                             -
                                         </button>
@@ -77,7 +76,7 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
                                         <button
                                             type="button"
                                             className="btn btn-dark"
-                                            onClick={()=> increaseQuantity(guitar.id)}
+                                            onClick={()=> dispatch({type:'increase-quantity',payload:{id:guitar.id}})}
                                         >
 
                                             +
@@ -87,7 +86,7 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
                                         <button
                                             className="btn btn-danger"
                                             type="button"
-                                            onClick={() => removeFromCart(guitar.id)}
+                                            onClick={() => dispatch({type:'remove-from-cart',payload:{id:guitar.id}})}
                                         >
                                             X
                                         </button>
@@ -103,7 +102,7 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
 
                         <button className="btn btn-dark w-100 mt-3 p-2"
                         
-                        onClick={()=> clearCart()}
+                        onClick={()=>dispatch({type:'clear-cart'}) }
                         >Vaciar Carrito</button>
                     </div>
                 </div>
@@ -148,7 +147,7 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
                                         <button
                                             className="btn btn-danger"
                                             type="button"
-                                            onClick={() => removeFromFav(guitar.id)}
+                                            onClick={() => dispatch({type:'remove-from-fav',payload: {id:guitar.id}})}
                                         >
                                             X
                                         </button>
@@ -161,8 +160,7 @@ function Header({cart,removeFromCart,increaseQuantity,decrementQuantity,clearCar
                         )}
 
                         <button className="btn btn-dark w-100 mt-3 p-2"
-                        
-                        onClick={()=> clearCart()}
+                        onClick={()=>dispatch({type:'clear-cart'}) }
                         >Vaciar favoritos</button>
                     </div>
                 </div>

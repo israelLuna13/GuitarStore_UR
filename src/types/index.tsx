@@ -9,3 +9,8 @@ export type Guitar = {
   export type CartItem =Guitar & {
     quantity:number
   }
+
+  export type FavItem = Guitar &{
+    quantity:number
+
+  }

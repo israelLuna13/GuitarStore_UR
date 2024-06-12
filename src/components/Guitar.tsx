@@ -1,17 +1,17 @@
-import type {Guitar} from '../types'
+import type { Guitar } from "../types";
+import type { CartActions } from "../reducers/cartReducer";
+import { Dispatch } from "react";
+
+//tipado de los props , cuando pasan a otros componente pierden su tipo de dato
 type GuitarProps = {
-   guitar:Guitar,
-    addToCart: (item: Guitar) => void,
-    addToFav: (item: Guitar) => void
-}
-function Guitar({ guitar, addToCart, addToFav }:GuitarProps) {
-  // const hanldeClick=(guitar)=>{
+  guitar: Guitar;
+  dispatch: Dispatch<CartActions>;
+};
 
-  //   // toma una copia del carrtio y le agrega un nuevo elemento
-  //   setCart([...cart,guitar])
-
-  // }
+function Guitar({ guitar, dispatch }: GuitarProps) {
+  
   const { name, image, description, price } = guitar;
+
   return (
     <div className="col-md-6 col-lg-4 my-4 row align-items-center">
       <div className="col-4">
@@ -28,7 +28,10 @@ function Guitar({ guitar, addToCart, addToFav }:GuitarProps) {
         <button
           type="button"
           className="btn btn-dark w-100"
-          onClick={() => addToCart(guitar)}
+          // el dispatch manda llamar la accion a ejecutar y se le pasa el argumento que necesita
+          onClick={() =>
+            dispatch({ type: "add-to-cart", payload: { item: guitar } })
+          }
         >
           Agregar al Carrito
         </button>
@@ -36,7 +39,11 @@ function Guitar({ guitar, addToCart, addToFav }:GuitarProps) {
         <button
           type="button"
           className="btn btn-dark w-100"
-          onClick={() => addToFav(guitar)}
+         // el dispatch manda llamar la accion a ejecutar y se le pasa el argumento que necesita
+
+          onClick={() =>
+            dispatch({ type: "add-to-fav", payload: { item: guitar } })
+          }
         >
           Agregar a favoritos
         </button>
